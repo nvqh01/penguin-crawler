@@ -19,7 +19,7 @@ let successfulRequestCount = 0;
       ...puppeteerCrawlerOptions,
       headless: false,
       keepAlive: true,
-      maxConcurrency: 10,
+      maxConcurrency: 20,
       maxRequestRetries: 0,
       maxRequestsPerCrawl: 0,
       maxRequestsPerMinute: 200,
@@ -46,16 +46,16 @@ let successfulRequestCount = 0;
   );
 
   setInterval(async () => {
-    const _domains = domains.splice(0, 5);
+    const _domains = domains.splice(0, 100);
     console.log(
       `Domains in queue: ${(domainsInQueueCount += _domains.length)}`
     );
     await crawler.addRequests(
       _domains.map((domain) =>
-        createRequest({ url: `http://52.34.29.200/website/${domain}` })
+        createRequest({ url: `https://www.similarweb.com/website/${domain}/` })
       )
     );
-  }, 5_000);
+  }, 30_000);
 })();
 
 function failedRequestHandler() {

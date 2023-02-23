@@ -60,7 +60,7 @@ class BrowserCrawlerOptions extends BasicCrawlerOptions {
           useFingerprintCache: true,
         },
         maxOpenPagesPerBrowser: 20,
-        operationTimeoutSecs: 20,
+        operationTimeoutSecs: 15,
         retireBrowserAfterPageCount: 100,
         useFingerprints: true,
         ...(this.options?.browserPoolOptions || {}),
