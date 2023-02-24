@@ -17,6 +17,9 @@ let successfulRequestCount = 0;
     const url = `https://www.similarweb.com/website/${domain}/`;
     return !handledDomains.some((_domain) => _domain === url);
   });
+  console.log(domains.length);
+  console.log(handledDomains.length);
+  console.log("Check:: " + unhandledDomains.length);
   let proxies = config.get("proxies");
 
   const crawler = new Crawler({
@@ -78,9 +81,19 @@ let successfulRequestCount = 0;
 })();
 
 function failedRequestHandler() {
-  return function ({ log, request }) {
-    log.error(request.errorMessages[0]);
+  return function ({ log, request, proxyInfo }) {
+    const error = `${request.errorMessages[0]}`;
+    log.error(error);
     log.info(`Failed request count: ${++failedRequestCount}`);
+    if (error.includes("Proxy")) {
+      fs.appendFileSync(
+        "results/similarweb.com/failed_proxies.txt",
+        `'${proxyInfo.url}',\n`,
+        {
+          encoding: "utf-8",
+        }
+      );
+    }
     fs.appendFileSync(
       "results/similarweb.com/failed_results.txt",
       `'${request.url}',\n`,
@@ -98,7 +111,7 @@ function requestHandler() {
     const { domain } = request.userData;
     const rank = json[domain].highestTrafficCountryRanking;
     let filePath = "results/similarweb.com/successful_results/";
-    let content = `'${domain}',`;
+    let content = `'https://www.similarweb.com/website/${domain}/',`;
     if (rank > 0) {
       filePath += "ranked_domains.txt";
       content += rank;

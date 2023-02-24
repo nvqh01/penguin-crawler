@@ -1,7 +1,10 @@
 const fs = require("fs");
 
 try {
-  const data = fs.readFileSync(`ranked_domains.txt`, "utf8");
+  const data = fs.readFileSync(
+    `${__dirname}/../results/similarweb.com/successful_results/ranked_domains.txt`,
+    "utf8"
+  );
   const urls = data.split("\n");
   for (const url of urls) {
     const _url = url.split(",")[0];
