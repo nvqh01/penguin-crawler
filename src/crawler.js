@@ -204,6 +204,7 @@ class Crawler {
 function createRequest({
   url,
   uniqueKey = null,
+  headers = {},
   userData = {},
   label = null,
   noRetry = false,
@@ -211,6 +212,7 @@ function createRequest({
 }) {
   const request = {
     url,
+    headers,
     userData,
     noRetry,
     skipNavigation,

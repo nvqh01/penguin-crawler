@@ -27,21 +27,14 @@ let successfulRequestCount = 0;
     proxies: [...proxies],
     crawlerOptions: {
       ...cheerioCrawlerOptions,
-      additionalMimeTypes: ["application/octet-stream"],
+      additionalMimeTypes: ["application/octet-stream", "text/plain"],
       keepAlive: true,
-      maxConcurrency: 5,
+      maxConcurrency: 1,
       maxRequestRetries: 0,
       maxRequestsPerCrawl: 0,
       maxRequestsPerMinute: 50,
       minConcurrency: 1,
       navigationTimeoutSecs: 60,
-      preNavigationHooks: [
-        async (_, gotoOptions) => {
-          gotoOptions.headers = {
-            Cookie: cookies,
-          };
-        },
-      ],
       requestHandlerTimeoutSecs: 60,
       sessionPoolOptions: {
         sessionOptions: {
@@ -71,6 +64,9 @@ let successfulRequestCount = 0;
       _domains.map((domain) =>
         createRequest({
           url: `https://pro.similarweb.com/api/WebsiteOverview/getheader?keys=${domain}&mainDomainOnly=true&includeCrossData=true`,
+          headers: {
+            Cookie: cookies,
+          },
           userData: {
             domain,
           },
