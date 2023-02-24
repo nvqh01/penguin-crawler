@@ -55,5 +55,6 @@ module.exports = {
     },
   },
   domains: require("./domains"),
+  handledDomains: require("./handled-domains"),
   proxies: require("./proxies"),
 };
