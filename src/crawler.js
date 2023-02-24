@@ -152,13 +152,14 @@ class Crawler {
 
   checkProxies() {
     if (!this.proxies.length) return;
-    if (!this?.crawler || this.crawler?.sessionPool) return;
+    if (!this?.crawler || !this.crawler?.sessionPool) return;
     const numOfSessions = this.crawler.sessionPool.getState().sessions.length;
     if (numOfSessions > 0 && this.crawler.sessionPool.usableSessionsCount <= 0)
       this.restart("Crawler ran out of proxies.");
   }
 
   async release() {
+    if (!this.isWaitingToRestart()) return;
     this?.crawler && (await this.crawler.teardown().catch(() => {}));
     this?.requestQueue && this.requestQueue.reset();
     this._isWaitingToRestart = false;
