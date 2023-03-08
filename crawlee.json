@@ -1,5 +1,5 @@
 {
-  "availableMemoryRatio": 0.5,
-  "memoryMbytes": 16384,
+  "availableMemoryRatio": 0.6,
+  "memoryMbytes": 8192,
   "persistStorage": false
 }

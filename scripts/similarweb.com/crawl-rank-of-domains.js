@@ -30,6 +30,7 @@ const cookies = [
 
 let count = 0;
 let _count = 0;
+let __count = 0;
 
 let domainsInQueueCount = 0;
 let failedRequestCount = 0;
@@ -38,15 +39,17 @@ let successfulRequestCount = 0;
 (async () => {
   const { cheerioCrawlerOptions } = config.get("crawlerOptions");
   let domains = [...config.get("domains")];
-  domains = domains.map((domain) => {
-    let result = domain.replace("https://www.similarweb.com/website/", "");
-    result = result.replace("/", "");
-    result = result.trim();
-    return result;
-  });
+  // domains = domains.map((domain) => {
+  //   let result = domain.replace("https://www.similarweb.com/website/", "");
+  //   result = result.replace("/", "");
+  //   result = result.trim();
+  //   return result;
+  // });
   const handledDomains = [...config.get("handledDomains")];
   const unhandledDomains = domains.filter((domain) => {
-    const url = `https://www.similarweb.com/website/${domain}/`;
+    const url = domain.replace("#overview", "").trim();
+    console.log("Check: " + ++__count);
+    // const url = `https://www.similarweb.com/website/${domain}/`;
     return !handledDomains.some((_domain) => _domain === url);
   });
   console.log(domains.length);
@@ -62,9 +65,9 @@ let successfulRequestCount = 0;
       additionalMimeTypes: ["application/octet-stream", "text/plain"],
       keepAlive: true,
       maxConcurrency: 50,
-      maxRequestRetries: 3,
+      maxRequestRetries: 5,
       maxRequestsPerCrawl: 0,
-      maxRequestsPerMinute: 100,
+      maxRequestsPerMinute: 200,
       minConcurrency: 1,
       navigationTimeoutSecs: 75,
       requestHandlerTimeoutSecs: 75,
@@ -93,8 +96,8 @@ let successfulRequestCount = 0;
   );
 
   setInterval(async () => {
-    // const _domains = domains.splice(0, 20);
-    const _domains = unhandledDomains.splice(0, 20);
+    // const _domains = domains.splice(0, 30);
+    const _domains = unhandledDomains.splice(0, 30);
     console.log(
       `Domains in queue: ${(domainsInQueueCount += _domains.length)}`
     );
@@ -104,18 +107,22 @@ let successfulRequestCount = 0;
     }
     await crawler.addRequests(
       _domains.map((domain) =>
-        createRequest({
-          url: `https://pro.similarweb.com/api/WebsiteOverview/getheader?keys=${domain}&mainDomainOnly=true&includeCrossData=true`,
-          headers: {
-            Cookie: cookies[count % cookies.length],
-          },
-          userData: {
-            domain,
-          },
-        })
+        {
+          let _domain = domain.replace('https://www.similarweb.com/website/', '').replace('/#overview', '').trim();
+
+          return createRequest({
+            url: `https://pro.similarweb.com/api/WebsiteOverview/getheader?keys=${_domain}&mainDomainOnly=true&includeCrossData=true`,
+            headers: {
+              Cookie: cookies[count % cookies.length],
+            },
+            userData: {
+              domain: _domain,
+            },
+          })
+        }
       )
     );
-  }, 12_000);
+  }, 10_000);
 })();
 
 function failedRequestHandler() {
@@ -151,15 +158,18 @@ function requestHandler() {
     const category = json[domain].category;
     let filePath = "results/similarweb.com/successful_results/";
     let content = `'https://www.similarweb.com/website/${domain}/'`;
+
     if (rank > 0) {
       filePath += "ranked_domains.txt";
       content += `,${rank},'${category}'`;
     } else {
       filePath += "unranked_domains.txt";
     }
+
     fs.appendFileSync(filePath, `${content}\n`, {
       encoding: "utf-8",
     });
+    
     log.info(`Successful request count: ${++successfulRequestCount}`);
   });
 
