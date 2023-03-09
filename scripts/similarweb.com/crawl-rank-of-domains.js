@@ -45,16 +45,16 @@ let successfulRequestCount = 0;
   //   result = result.trim();
   //   return result;
   // });
-  const handledDomains = [...config.get("handledDomains")];
-  const unhandledDomains = domains.filter((domain) => {
-    const url = domain.replace("#overview", "").trim();
-    console.log("Check: " + ++__count);
-    // const url = `https://www.similarweb.com/website/${domain}/`;
-    return !handledDomains.some((_domain) => _domain === url);
-  });
-  console.log(domains.length);
-  console.log(handledDomains.length);
-  console.log("Check:: " + unhandledDomains.length);
+  // const handledDomains = [...config.get("handledDomains")];
+  // const unhandledDomains = domains.filter((domain) => {
+  //   const url = domain.replace("#overview", "").trim();
+  //   console.log("Check: " + ++__count);
+  //   // const url = `https://www.similarweb.com/website/${domain}/`;
+  //   return !handledDomains.some((_domain) => _domain === url);
+  // });
+  // console.log(domains.length);
+  // console.log(handledDomains.length);
+  // console.log("Check:: " + unhandledDomains.length);
   let proxies = config.get("proxies");
 
   const crawler = new Crawler({
@@ -96,8 +96,8 @@ let successfulRequestCount = 0;
   );
 
   setInterval(async () => {
-    // const _domains = domains.splice(0, 30);
-    const _domains = unhandledDomains.splice(0, 30);
+    const _domains = domains.splice(0, 30);
+    // const _domains = unhandledDomains.splice(0, 30);
     console.log(
       `Domains in queue: ${(domainsInQueueCount += _domains.length)}`
     );
